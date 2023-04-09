@@ -4,7 +4,7 @@ data "aws_route53_zone" "public" {
   private_zone = false
 }
 
-resource "aws_acm_certificate" "api" {
+resource "aws_acm_certificate" "tls_cert" {
   domain_name       = local.domain_name
   validation_method = "DNS"
 
@@ -15,7 +15,7 @@ resource "aws_acm_certificate" "api" {
 
 resource "aws_route53_record" "api_validation" {
   for_each = {
-    for dvo in aws_acm_certificate.api.domain_validation_options : dvo.domain_name => {
+    for dvo in aws_acm_certificate.tls_cert.domain_validation_options : dvo.domain_name => {
       name   = dvo.resource_record_name
       record = dvo.resource_record_value
       type   = dvo.resource_record_type
@@ -30,15 +30,17 @@ resource "aws_route53_record" "api_validation" {
   zone_id         = data.aws_route53_zone.public.zone_id
 }
 
-resource "aws_acm_certificate_validation" "api" {
-  certificate_arn = aws_acm_certificate.api.arn
+// To check that your cert is provisioned, in case other resources depend on the cert
+resource "aws_acm_certificate_validation" "cert_validation" {
+  certificate_arn = aws_acm_certificate.tls_cert.arn
   validation_record_fqdns = [
     for record in aws_route53_record.api_validation : record.fqdn
   ]
 }
 
-resource "aws_route53_record" "api" {
-  name    = aws_acm_certificate.api.domain_name
+// Maps the domain name of your load balancer to your domain name
+resource "aws_route53_record" "a_record" {
+  name    = aws_acm_certificate.tls_cert.domain_name
   type    = "A"
   zone_id = data.aws_route53_zone.public.zone_id
 

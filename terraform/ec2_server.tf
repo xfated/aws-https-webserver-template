@@ -19,43 +19,38 @@ resource "aws_iam_role" "ec2_role" {
 }
 
 resource "aws_iam_role_policy_attachment" "ec2_profile_attachment" {
-  role       = aws_iam_role.role.name
+  role       = aws_iam_role.ec2_role.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly" // The policy that provides ECR read access
 }
 
 resource "aws_iam_instance_profile" "ec2_profile" {
-  role = aws_iam_role.role.name
+  role = aws_iam_role.ec2_role.name
 }
 
-// Create your instance 
+// Creates an EC2 instance in each subnet (1 per availability zone)
+//List of EC2 AMI can be found here: https://cloud-images.ubuntu.com/locator/ec2/
 resource "aws_instance" "ec2_server_instance" {
-  ami           = "ami-0f74c08b8b5effa56" // Select an AMI in your region
-  instance_type = "t2.micro"              
-  iam_instance_profile = aws_iam_instance_profile.ec2_profile.name // Provide the role created above
-  key_name      = "crumble-server" // key-pair name
+  for_each = local.public_subnets
 
-  subnet_id                   = var.subnet_id // specify which subnet this instance is to be created in
-  vpc_security_group_ids      = [var.vpc_security_group_id]  // associate with security group ID of vpc
+  ami                  = "ami-0f74c08b8b5effa56" // Select an AMI in your region
+  instance_type        = "t2.micro"
+  iam_instance_profile = aws_iam_instance_profile.ec2_profile.name // Provide the role created above
+  key_name             = local.ec2_key_pair_name                   // key-pair name for ssh
+
+  subnet_id              = aws_subnet.public_subnets[each.key].id     // specify which subnet this instance is to be created in
+  vpc_security_group_ids = [aws_security_group.vpc_security_group.id] // associate with security group ID of vpc
 
   user_data_replace_on_change = true // to force recreation of instance if you update user_data
-  user_data = <<-EOF
-    #! /bin/bash
-    sudo apt update
-    sudo apt install docker.io -y
-    sudo apt install unzip
-    
-    curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-    unzip awscliv2.zip
-    sudo ./aws/install
-
-    # Pull
-    aws ecr get-login-password --region ap-southeast-1 | docker login --username AWS --password-stdin 552747892778.dkr.ecr.ap-southeast-1.amazonaws.com
-    docker pull 552747892778.dkr.ecr.ap-southeast-1.amazonaws.com/crumble-container-registry:crumble-backend
-
-    docker run -d -p 80:3000 552747892778.dkr.ecr.ap-southeast-1.amazonaws.com/crumble-container-registry:crumble-backend
-    EOF
+  user_data = templatefile("./templates/webserver_init.tpl", {
+    region         = local.aws_region
+    aws_account_id = local.aws_account_id
+    image_tag      = local.ec2_image_tag
+    ecr_repository = local.ecr_repository_name
+    machine_port   = 80
+    docker_port    = 3000
+  })
 
   tags = {
-    Name = "${local.project-name}-web-server"
+    Name = "${local.project_name}-web-server"
   }
 }

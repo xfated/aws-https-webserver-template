@@ -1,6 +1,6 @@
 // Manage your ECR Repository
 data "aws_ecr_repository" "ecr_repository" {
-    name = "${local.project-name}"
+  name = local.project_name
 }
 
 // Attaching a policy to clean up untagged images after 1 day
