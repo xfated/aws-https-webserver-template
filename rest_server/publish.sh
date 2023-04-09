@@ -1,7 +1,7 @@
 #! /bin/bash
 # Set vars
 IMAGE_TAG=https-webserver
-AWS_ACCOUNT_ID=552747892778
+AWS_ACCOUNT_ID=<your account id>
 ECR_REPOSITORY=aws-https-webserver
 REGION=ap-southeast-1
 
