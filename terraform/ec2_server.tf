@@ -51,6 +51,6 @@ resource "aws_instance" "ec2_server_instance" {
   })
 
   tags = {
-    Name = "${local.project_name}-web-server"
+    Name = "${local.project_name}-${each.key}-web-server"
   }
 }
