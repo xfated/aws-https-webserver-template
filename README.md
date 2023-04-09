@@ -34,8 +34,11 @@ So I thought: Heck, let me run my own server.
 
 ### 1.1 Required Knowledge
 - Terraform (to understand the syntax)
+    - or you can get an intro [here](https://developer.hashicorp.com/terraform/tutorials/aws-get-started)
 - Docker (used to simplify deployment of services)
+    - or you can get an intro [here](https://docs.docker.com/get-started/)
 - Brief knowledge of AWS 
+    - or you can get an intro with my guide at [TBD](TBD)
 
 ## 2. Goals
 The goal for this setup: 
@@ -90,8 +93,8 @@ A more detailed traffic routing can be found [here](https://docs.aws.amazon.com/
 1. Create an Access Key under IAM -> Access management -> Users -> Security credentials -> Access keys
 1. Get the "Access Key Id" and "Secret Access Key" and set in environment variables using the following commands in your terminal.
     ```bash
-    export AWS_ACCESS_KEY_ID=<your access key id>
-    export AWS_SECRET_KEY_ID=<your SECRET key id>
+    export AWS_ACCESS_KEY_ID=<your ACCESS KEY ID>
+    export AWS_SECRET_KEY_ID=<your SECRET KEY ID>
     ```
 
 ## 5. Creating the AWS Resouces with Terraform
