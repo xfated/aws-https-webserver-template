@@ -20,7 +20,7 @@
         <li><a href="#43-get-aws-credentials-to-run-terraform">4.3. Get AWS Credentials to run Terraform</a></li>
       </ul>
     </li>
-    <li><a href="#5-creating-aws-resouces-with-terraform">5. Creating AWS Resources with Terraform</a></li>
+    <li><a href="#5-creating-the-aws-resouces-with-terraform">5. Creating AWS Resources with Terraform</a></li>
     <li><a href="#6-debugging-your-ec2-instance">6. Debugging your ec2 instances</a></li>
   </ul>
 </div>
