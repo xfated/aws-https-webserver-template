@@ -38,7 +38,7 @@ So I thought: Heck, let me run my own server.
 - Docker (used to simplify deployment of services)
     - or you can get an intro [here](https://docs.docker.com/get-started/)
 - Brief knowledge of AWS 
-    - or you can get an intro with my guide at [TBD](TBD)
+    - or you can get an intro with my guide on [medium](https://medium.com/@xfated/deploying-a-https-web-server-on-amazon-with-terraform-a03f45d0c898)
 
 ## 2. Goals
 The goal for this setup: 

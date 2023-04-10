@@ -71,7 +71,7 @@ resource "aws_security_group" "vpc_security_group" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  // Allow Inbound SSH for debugigng purposes
+  // Allow Inbound SSH for debugging purposes
   ingress {
     from_port   = 22
     to_port     = 22
